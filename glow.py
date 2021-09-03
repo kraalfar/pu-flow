@@ -11,7 +11,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class Glow(nn.Module):
     """ Glow multi-scale architecture with depth of flow K and number of levels L; cf Glow figure 2; section 3"""
 
-    def __init__(self, width=512, depth=32, n_levels=3, input_dims=(3, 32, 32), checkpoint_grads=False,
+    def __init__(self, width=128, depth=16, n_levels=2, input_dims=(3, 32, 32), checkpoint_grads=False,
                  lu_factorize=False):
         super().__init__()
         # calculate output dims
@@ -91,7 +91,8 @@ class Glow(nn.Module):
             num_epochs=10,
             lr=1e-3,
             batch_size=512,
-            gamma=0.99):
+            gamma=0.99,
+            outfile=None):
 
         self.to(device)
 
@@ -116,5 +117,5 @@ class Glow(nn.Module):
                 optim.step()
 
                 running_loss += loss.item()
-
+            print(f"[{epoch}/{num_epochs}]: loss={running_loss}", file=outfile)
             scheduler.step()
